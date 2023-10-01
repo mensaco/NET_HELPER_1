@@ -62,6 +62,12 @@
           @apply bg-red-700 text-red-50;
          }
 
+         .pattern-load{
+          @apply text-blue-100 hover:text-blue-700 bg-blue-500 hover:bg-blue-200 px-1 pb-[2px] rounded;
+         }
+         .pattern-save{
+          @apply text-blue-100 hover:text-blue-700 bg-blue-500 hover:bg-blue-200 px-1 pb-[2px] rounded;
+         }
          .pattern-copy{
           @apply text-green-100 hover:text-green-700 bg-green-500 hover:bg-green-200 px-1 pb-[2px] rounded;
          }
@@ -85,9 +91,12 @@
       <div class="h-[calc(100vh-5rem)] flex flex-col justify-start gap-y-3 w-[22rem]">
         
         <div class="flex flex-col justify-start gap-y-1 py-3 w-full h-80">
-          <label class="inverted">Input - C# Class</label>
+          <label class="inverted flex justify-between"><span>Input - C# Class</span> <div>
+            <button x-on:click="upload()" title="Load a previously saved state from a JSON file" class="pattern-load">[l]</button>
+              <button x-on:click="download()" title="Save the current state to a file" class="pattern-save">[s]</button>
+          </div> </label>
           <div class="flex-1"> <textarea x-model="input"></textarea></div>
-          <div><button x-on:click="extract" class="px-3 py-1 my-2 border bg-gray-100 hover:bg-gray-300 rounded" >extract/refresh properties</button></div>
+          <div><button x-on:click="extract" class="pattern-load font-semibold mt-1" >extract/refresh properties</button></div>
         </div>
         
       

@@ -4,6 +4,99 @@ window.copyText = function (textToCopy) {
     document.body.removeChild(myTemporaryInputElement);
 }
 
+window.upload = function(){
+    readFileFromDialog(function (fileContent) {
+        if (fileContent) {
+            setLocalStorageFromJson(fileContent);
+        }
+    })
+}
+
+window.download = function () {
+
+    const filename = 'NET_HELPER_STATE.' + (new Date()).toString() + '.json'
+    var text = JSON.stringify(window.getAllLocalStorageItems())
+
+
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+}
+
+window.getAllLocalStorageItems = function () {
+    const items = {};
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        const value = localStorage.getItem(key);
+        items[key] = value;
+    }
+    return items;
+}
+
+
+
+window.readFileFromDialog = function (callback) {
+    // Create an input element of type 'file'
+    const inputElement = document.createElement('input');
+    inputElement.type = 'file';
+
+    // Set the 'accept' attribute to specify allowed file types
+    inputElement.accept = '.json';
+
+    // Add an event listener for when a file is selected
+    inputElement.addEventListener('change', function (event) {
+        const file = event.target.files[0]; // Get the selected file
+
+        if (!file) {
+            // No file selected, return early
+            return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+            const fileContent = e.target.result; // Read the file content as a string
+            callback(fileContent); // Call the provided callback with the file content
+        };
+
+        // Read the file as text
+        reader.readAsText(file);
+    });
+
+    // Trigger a click event on the input element to open the file dialog
+    inputElement.click();
+}
+
+
+
+window.setLocalStorageFromJson = function (jsonString) {
+    try {
+        const data = JSON.parse(jsonString);
+        for (const key in data) {
+            if (data.hasOwnProperty(key)) {
+                localStorage.setItem(key, data[key]);
+            }
+        }
+        return true; // Indicates success
+    } catch (error) {
+        console.error('Error parsing JSON or setting localStorage:', error);
+        return false; // Indicates failure
+    }
+}
+
+
+
+
+
+
+
 
 window.appObject = () => {
     return {
@@ -510,8 +603,8 @@ window.appObject = () => {
         
         `),
         stringDP: Alpine.$persist([]),
-        stringEP: Alpine.$persist([]),     
-        extracted:Alpine.$persist([]),
+        stringEP: Alpine.$persist([]),
+        extracted: Alpine.$persist([]),
         //extractedPropertiesInfo:Alpine.$persist([]),
         parseCSharpProperty(input) {
             // Regular expression to match C# property attributes
@@ -584,31 +677,31 @@ window.appObject = () => {
                 }
 
             })
-            
+
             return l
         },
-        get extractedPropertiesInfo(){
-            return this.extracted.filter((p)=> p.incl == true)
+        get extractedPropertiesInfo() {
+            return this.extracted.filter((p) => p.incl == true)
         },
-        extract(){
+        extract() {
             this.extracted = this.extractedPropertiesInfoB
         },
-        addDisplayPattern(){
+        addDisplayPattern() {
             this.stringDP.push({
                 "Pattern": "...",
-                "ForTypes":"..."
+                "ForTypes": "..."
             })
         },
-        removeDisplayPattern(index){
+        removeDisplayPattern(index) {
             this.stringDP.splice(index, 1)
         },
-        addEditPattern(){
+        addEditPattern() {
             this.stringEP.push({
                 "Pattern": "...",
-                "ForTypes":"..."
+                "ForTypes": "..."
             })
         },
-        removeEditPattern(index){
+        removeEditPattern(index) {
             this.stringEP.splice(index, 1)
         },
         get razorDisplay() {
@@ -620,18 +713,18 @@ window.appObject = () => {
                         pi.label = pi.name
                     }
                     const usePattern = this.stringDP.find((el) => el.ForTypes.indexOf(pi.type) > -1)
-                    if(usePattern){
+                    if (usePattern) {
                         const snippet = usePattern.Pattern
                             .replace(/\{label\}/g, pi.label)
                             .replace(/\{name\}/g, pi.name)
-                            l.push(snippet)
+                        l.push(snippet)
                     }
 
                 })
             }
             return l
         },
-        get razorEdit(){
+        get razorEdit() {
             const l = []
             const propsinfos = this.extractedPropertiesInfo
             if (propsinfos) {
@@ -639,48 +732,48 @@ window.appObject = () => {
                     if (!pi.label) {
                         pi.label = pi.name
                     }
-                    
+
                     var usePattern;
                     const usePatterns = this.stringEP.filter((el) => el.ForTypes.indexOf(pi.type) > -1)
-                    
-                    if(usePatterns && usePatterns.length > 1){
-                        const condPatterns = usePatterns.filter((el) => el.ForTypes.indexOf(pi.type+'[')> -1)
-                        for(var i = 0; i < condPatterns.length; i++){
 
-                            const regexp = new RegExp(pi.type,"g")
+                    if (usePatterns && usePatterns.length > 1) {
+                        const condPatterns = usePatterns.filter((el) => el.ForTypes.indexOf(pi.type + '[') > -1)
+                        for (var i = 0; i < condPatterns.length; i++) {
+
+                            const regexp = new RegExp(pi.type, "g")
                             const cpatterns = condPatterns[i].ForTypes.split(/ /)
-                            
+
                             for (let j = 0; j < cpatterns.length; j++) {
-                                const [type,condition,] = cpatterns[j].split(/[\[\]]/g);
-                                if(pi.type == type){
+                                const [type, condition,] = cpatterns[j].split(/[\[\]]/g);
+                                if (pi.type == type) {
                                     let body = "return pi." + condition
                                     let useThis = Function("pi", body)(pi)
-                                    if(useThis){
-                                        usePattern = condPatterns[i]                                         
+                                    if (useThis) {
+                                        usePattern = condPatterns[i]
                                     }
-                                    else{
-                                        usePattern = usePatterns.find((el) => el.ForTypes.indexOf(pi.type+'[') == -1)
+                                    else {
+                                        usePattern = usePatterns.find((el) => el.ForTypes.indexOf(pi.type + '[') == -1)
                                     }
                                 }
-                                
-                                 
+
+
                             }
 
-                              
+
                         }
 
                     }
-                    else if(usePatterns && usePatterns.length == 1) {
+                    else if (usePatterns && usePatterns.length == 1) {
                         usePattern = usePatterns[0]
                         //debugger
                     }
-                    
+
                     //usePattern = this.stringEP.find((el) => el.ForTypes.indexOf(pi.type) > -1)
-                    if(usePattern){
+                    if (usePattern) {
                         const snippet = usePattern.Pattern
                             .replace(/\{label\}/g, pi.label)
                             .replace(/\{name\}/g, pi.name)
-                            l.push(snippet)
+                        l.push(snippet)
                     }
 
                 })
