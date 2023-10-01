@@ -17,8 +17,8 @@
             body{
               @apply bg-gray-300;
             }
-            label{
-                @apply mb-2 block font-semibold rounded text-sm px-2 py-1;
+            label, .label{
+                @apply mb-2 font-semibold rounded text-sm px-2 py-1;
             }
              
           .box-1,.box-2 {
@@ -87,99 +87,253 @@
 
   <div x-data="appObject()">
     <div class="flex flex-wrap justify-start items-start gap-3 p-3 h-[calc(100vh-5rem)] ">
-      
+
       <div class="h-[calc(100vh-5rem)] flex flex-col justify-start gap-y-3 w-[22rem]">
-        
-        <div class="flex flex-col justify-start gap-y-1 py-3 w-full h-80">
-          <label class="inverted flex justify-between"><span>Input - C# Class</span> <div>
-            <button x-on:click="upload()" title="Load a previously saved state from a JSON file" class="pattern-load">[l]</button>
-              <button x-on:click="download()" title="Save the current state to a file" class="pattern-save">[s]</button>
-          </div> </label>
+
+        <div class="flex flex-col justify-start gap-y-1 w-full h-80">
+
+          <div class="flex justify-between label inverted">
+            <div >Input - C# Class</div>
+            <div class="">
+              <button type="button" x-on:click="upload()" title="Load a previously saved state from a JSON file"
+                class="pattern-load">[l]</button>
+              <button type="button" x-on:click="download()" title="Save the current state to a file"
+                class="pattern-save">[s]</button>
+            </div>
+          </div>
+
           <div class="flex-1"> <textarea x-model="input"></textarea></div>
-          <div><button x-on:click="extract" class="pattern-load font-semibold mt-1" >extract/refresh properties</button></div>
+          <div><button type="button" x-on:click="extract" class="pattern-load font-semibold mt-1">extract/refresh
+              properties</button>
+          </div>
         </div>
-        
-      
+
+
         <div class="flex-1 overflow-scroll">
-          <label class="inverted">Included in Results:</label>
+          <div class="inverted label">Included in Results:</div>
           <div class="p-3 bg-gray-200 rounded-md">
             <template x-for="(ep, index) in extracted" :key="index">
               <div class="grid grid-cols-10 gap-3 overflow-scroll">
                 <div><input type="checkbox" x-model="ep.incl" x-bind:name="'incl_'+index" /></div>
-                <div class="col-span-2"><input type="text" style="width:100%"  x-model="ep.type"/></div>
-                <div class="col-span-7"><input type="text"  style="width:100%" x-model="ep.name"/></div>
-              </div>            
+                <div class="col-span-2"><input type="text" style="width:100%" x-model="ep.type" /></div>
+                <div class="col-span-7"><input type="text" style="width:100%" x-model="ep.name" /></div>
+              </div>
             </template>
           </div>
 
         </div>
-        
+
 
       </div>
 
       <div class="flex flex-col justify-start gap-y-3 w-[22rem]">
         <div class="w-full">
-          <label class="inverted flex justify-between"><span>Display Patterns:</span> <button x-on:click="addDisplayPattern" title="Add a pattern" class="pattern-add">[+]</button> </label>
+          <div class="inverted label flex justify-between"><span>Display Patterns:</span> <button type="button"
+              x-on:click="addDisplayPattern" title="Add a pattern" class="pattern-add">[+]</button> </div>
           <template x-for="(pattern, index) in stringDP" :key="index">
             <div x-data="{isover : ''}">
-              <label class="flex justify-between"><div>Pattern:</div>  <button x-on:click="removeDisplayPattern(index)" title="Deletion is ireversible!..." 
-                @mouseout="isover=''" @mouseover="isover = 'inverted-red'" class="pattern-delete">[-]</button></label>
+              <div class="flex justify-between label mt-2">
+                <div>Pattern:</div> <button type="button" x-on:click="removeDisplayPattern(index)"
+                  title="Deletion is ireversible!..." @mouseout="isover=''" @mouseover="isover = 'inverted-red'"
+                  class="pattern-delete">[-]</button>
+              </div>
               <p>
                 <textarea x-model="pattern.Pattern" x-bind:name="'pattern_' + index" :class="isover"></textarea>
               </p>
-              <label>Apply to type(s): </label>
+              <div class="label">Apply to type(s): </div>
               <p>
                 <input type="text" x-model="pattern.ForTypes" x-bind:name="'forTypes_' + index" :class="isover" />
               </p>
             </div>
-  
+
           </template>
-  
+
           <div x-data="{isover:''}">
-         
-            <label class="flex justify-between"><span>Result:</span> <button x-on:click="copyText(razorDisplay.join(''))" title="Copy the result to the Clipboard" 
-              @mouseout="isover=''" @mouseover="isover = 'inverted-green'" class="pattern-copy">[c]</button></label>
+
+            <div class="flex justify-between label"><span>Result:</span> <button type="button"
+                x-on:click="copyText(razorDisplay.join(''))" title="Copy the result to the Clipboard"
+                @mouseout="isover=''" @mouseover="isover = 'inverted-green'" class="pattern-copy">[c]</button></div>
             <div class="h-40">
               <textarea x-text="razorDisplay.join('')" :class="isover"></textarea>
             </div>
-    
+
           </div>
         </div>
-        
+
 
         <div>
-          <label class="inverted flex justify-between"><span>Edit Patterns:</span> <button x-on:click="addEditPattern" title="Add a pattern" class="pattern-add">[+]</button> </label>
+          <div class="inverted label flex justify-between"><span>Edit Patterns:</span> <button type="button"
+              x-on:click="addEditPattern" title="Add a pattern" class="pattern-add">[+]</button> </div>
           <template x-for="(pattern, index) in stringEP" :key="index">
             <div x-data="{isover : ''}">
-              <label class="flex justify-between"><span>Pattern:</span>  <button x-on:click="removeEditPattern(index)" title="Deletion is ireversible!..." 
-                @mouseout="isover=''" @mouseover="isover = 'inverted-red'" class="pattern-delete">[-]</button></label>
+              <div class="flex justify-between label"><span>Pattern:</span> <button type="button"
+                  x-on:click="removeEditPattern(index)" title="Deletion is ireversible!..." @mouseout="isover=''"
+                  @mouseover="isover = 'inverted-red'" class="pattern-delete">[-]</button></div>
               <div>
                 <textarea x-model="pattern.Pattern" x-bind:name="'pattern_' + index" :class="isover"></textarea>
               </div>
-              <label>Apply to type(s): </label>
+              <div class="label">Apply to type(s): </div>
               <div>
-                <input type="text" x-model="pattern.ForTypes" x-bind:name="'forTypes_' + index"  :class="isover"/>
+                <input type="text" x-model="pattern.ForTypes" x-bind:name="'forTypes_' + index" :class="isover" />
               </div>
             </div>
-  
+
           </template>
-  
+
           <div x-data="{isover:''}">
-         
-            <label class="flex justify-between"><span>Result:</span> <button x-on:click="copyText(razorEdit.join(''))" title="Copy the result to the Clipboard" 
-              @mouseout="isover=''" @mouseover="isover = 'inverted-green'" class="pattern-copy">[c]</button></label>
+
+            <div class="flex justify-between label"><span>Result:</span> <button type="button"
+                x-on:click="copyText(razorEdit.join(''))" title="Copy the result to the Clipboard" @mouseout="isover=''"
+                @mouseover="isover = 'inverted-green'" class="pattern-copy">[c]</button></div>
             <div class="h-40">
-              <textarea x-text="razorEdit.join('')" :class="isover" ></textarea>
+              <textarea x-text="razorEdit.join('')" :class="isover"></textarea>
             </div>
-    
+
           </div>
         </div>
 
       </div>
-      
+
+      <!-- extra patterns -->
+
+      <div class="flex flex-col justify-start gap-y-3 w-[22rem]">
+        <div class="w-full">
+          <div class="inverted flex justify-between label"><span>Extra Patterns (1):</span> <button type="button"
+              x-on:click="addExtraPattern1" title="Add a pattern" class="pattern-add">[+]</button> </div>
+          <template x-for="(pattern, index) in extraPattern1" :key="index">
+            <div x-data="{isover : ''}">
+              <div class="flex justify-between label">
+                <div>Pattern:</div> <button type="button" x-on:click="removeExtraPattern1(index)"
+                  title="Deletion is ireversible!..." @mouseout="isover=''" @mouseover="isover = 'inverted-red'"
+                  class="pattern-delete">[-]</button>
+              </div>
+              <p>
+                <textarea x-model="pattern.Pattern" x-bind:name="'pattern_' + index" :class="isover"></textarea>
+              </p>
+              <div class="label">Apply to type(s): </div>
+              <p>
+                <input type="text" x-model="pattern.ForTypes" x-bind:name="'forTypes_' + index" :class="isover" />
+              </p>
+            </div>
+
+          </template>
+
+          <div x-data="{isover:''}">
+
+            <div class="flex justify-between label"><span>Result:</span> <button type="button"
+                x-on:click="copyText(ExtraPattern1.join(''))" title="Copy the result to the Clipboard"
+                @mouseout="isover=''" @mouseover="isover = 'inverted-green'" class="pattern-copy">[c]</button></div>
+            <div class="h-40">
+              <textarea x-text="ExtraPattern1.join('')" :class="isover"></textarea>
+            </div>
+
+          </div>
+        </div>
 
 
-      
+        <div>
+          <div class="inverted flex justify-between label"><span>Extra Patterns (2):</span> <button type="button"
+              x-on:click="addExtraPattern2" title="Add a pattern" class="pattern-add">[+]</button> </div>
+          <template x-for="(pattern, index) in extraPattern2" :key="index">
+            <div x-data="{isover : ''}">
+              <div class="flex justify-between label"><span>Pattern:</span> <button type="button"
+                  x-on:click="removeExtraPattern2(index)" title="Deletion is ireversible!..." @mouseout="isover=''"
+                  @mouseover="isover = 'inverted-red'" class="pattern-delete">[-]</button></div>
+              <div>
+                <textarea x-model="pattern.Pattern" x-bind:name="'pattern_' + index" :class="isover"></textarea>
+              </div>
+              <div class="label">Apply to type(s): </div>
+              <div>
+                <input type="text" x-model="pattern.ForTypes" x-bind:name="'forTypes_' + index" :class="isover" />
+              </div>
+            </div>
+
+          </template>
+
+          <div x-data="{isover:''}">
+
+            <div class="flex justify-between label"><span>Result:</span> <button type="button"
+                x-on:click="copyText(ExtraPattern2.join(''))" title="Copy the result to the Clipboard"
+                @mouseout="isover=''" @mouseover="isover = 'inverted-green'" class="pattern-copy">[c]</button></div>
+            <div class="h-40">
+              <textarea x-text="ExtraPattern2.join('')" :class="isover"></textarea>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+
+      <div class="flex flex-col justify-start gap-y-3 w-[22rem]">
+        <div class="w-full">
+          <div class="inverted flex justify-between label"><span>Extra Patterns (3):</span> <button type="button"
+              x-on:click="addExtraPattern3" title="Add a pattern" class="pattern-add">[+]</button> </div>
+          <template x-for="(pattern, index) in extraPattern3" :key="index">
+            <div x-data="{isover : ''}">
+              <div class="flex justify-between label">
+                <div>Pattern:</div> <button type="button" x-on:click="removeExtraPattern3(index)"
+                  title="Deletion is ireversible!..." @mouseout="isover=''" @mouseover="isover = 'inverted-red'"
+                  class="pattern-delete">[-]</button>
+              </div>
+              <p>
+                <textarea x-model="pattern.Pattern" x-bind:name="'pattern_' + index" :class="isover"></textarea>
+              </p>
+              <div class="label">Apply to type(s): </div>
+              <p>
+                <input type="text" x-model="pattern.ForTypes" x-bind:name="'forTypes_' + index" :class="isover" />
+              </p>
+            </div>
+
+          </template>
+
+          <div x-data="{isover:''}">
+
+            <div class="flex justify-between label"><span>Result:</span> <button type="button"
+                x-on:click="copyText(ExtraPattern3.join(''))" title="Copy the result to the Clipboard"
+                @mouseout="isover=''" @mouseover="isover = 'inverted-green'" class="pattern-copy">[c]</button></div>
+            <div class="h-40">
+              <textarea x-text="ExtraPattern3.join('')" :class="isover"></textarea>
+            </div>
+
+          </div>
+        </div>
+
+
+        <div>
+          <div class="inverted flex justify-between label"><span>Extra Patterns (4):</span> <button type="button"
+              x-on:click="addExtraPattern4" title="Add a pattern" class="pattern-add">[+]</button> </div>
+          <template x-for="(pattern, index) in extraPattern4" :key="index">
+            <div x-data="{isover : ''}">
+              <div class="flex justify-between label"><span>Pattern:</span> <button type="button"
+                  x-on:click="removeExtraPattern4(index)" title="Deletion is ireversible!..." @mouseout="isover=''"
+                  @mouseover="isover = 'inverted-red'" class="pattern-delete">[-]</button></div>
+              <div>
+                <textarea x-model="pattern.Pattern" x-bind:name="'pattern_' + index" :class="isover"></textarea>
+              </div>
+              <div class="label">Apply to type(s): </div>
+              <div>
+                <input type="text" x-model="pattern.ForTypes" x-bind:name="'forTypes_' + index" :class="isover" />
+              </div>
+            </div>
+
+          </template>
+
+          <div x-data="{isover:''}">
+
+            <div class="flex justify-between label"><span>Result:</span> <button type="button"
+                x-on:click="copyText(ExtraPattern4.join(''))" title="Copy the result to the Clipboard"
+                @mouseout="isover=''" @mouseover="isover = 'inverted-green'" class="pattern-copy">[c]</button></div>
+            <div class="h-40">
+              <textarea x-text="ExtraPattern4.join('')" :class="isover"></textarea>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+
 
 
     </div>
@@ -188,7 +342,8 @@
 
 
   <!-- Alpine Plugins -->
-  <script src="https://cdn.jsdelivr.net/npm/@marcreichel/alpine-autosize@latest/dist/alpine-autosize.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@marcreichel/alpine-autosize@latest/dist/alpine-autosize.min.js"
+    defer></script>
   <script src="https://cdn.jsdelivr.net/npm/@alpinejs/persist@3.x.x/dist/cdn.min.js" defer></script>
   <!-- Alpine Core -->
   <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>

@@ -1,10 +1,9 @@
 // copy text
 window.copyText = function (textToCopy) {
     navigator.clipboard.writeText(textToCopy);
-    document.body.removeChild(myTemporaryInputElement);
 }
 
-window.upload = function(){
+window.upload = function () {
     readFileFromDialog(function (fileContent) {
         if (fileContent) {
             setLocalStorageFromJson(fileContent);
@@ -14,7 +13,8 @@ window.upload = function(){
 
 window.download = function () {
 
-    const filename = 'NET_HELPER_STATE.' + (new Date()).toString() + '.json'
+
+    const filename = 'NET_HELPER_STATE_' + new Date().toISOString().slice(0,19).replace(/[-:]/g,'').replace(/T/,'_') + '.json'
     var text = JSON.stringify(window.getAllLocalStorageItems())
 
 
@@ -604,6 +604,10 @@ window.appObject = () => {
         `),
         stringDP: Alpine.$persist([]),
         stringEP: Alpine.$persist([]),
+        extraPattern1: Alpine.$persist([]),
+        extraPattern2: Alpine.$persist([]),
+        extraPattern3: Alpine.$persist([]),
+        extraPattern4: Alpine.$persist([]),
         extracted: Alpine.$persist([]),
         //extractedPropertiesInfo:Alpine.$persist([]),
         parseCSharpProperty(input) {
@@ -704,6 +708,42 @@ window.appObject = () => {
         removeEditPattern(index) {
             this.stringEP.splice(index, 1)
         },
+        addExtraPattern1() {
+            this.extraPattern1.push({
+                "Pattern": "...",
+                "ForTypes": "..."
+            })
+        },
+        removeExtraPattern1(index) {
+            this.extraPattern1.splice(index, 1)
+        },
+        addExtraPattern2() {
+            this.extraPattern2.push({
+                "Pattern": "...",
+                "ForTypes": "..."
+            })
+        },
+        removeExtraPattern2(index) {
+            this.extraPattern2.splice(index, 1)
+        },
+        addExtraPattern3() {
+            this.extraPattern3.push({
+                "Pattern": "...",
+                "ForTypes": "..."
+            })
+        },
+        removeExtraPattern3(index) {
+            this.extraPattern3.splice(index, 1)
+        },
+        addExtraPattern4() {
+            this.extraPattern4.push({
+                "Pattern": "...",
+                "ForTypes": "..."
+            })
+        },
+        removeExtraPattern4(index) {
+            this.extraPattern4.splice(index, 1)
+        },
         get razorDisplay() {
             const l = []
             const propsinfos = this.extractedPropertiesInfo
@@ -779,6 +819,90 @@ window.appObject = () => {
                 })
             }
             return l
+        },
+        get ExtraPattern1() {
+            const l = []
+            const propsinfos = this.extractedPropertiesInfo
+            if (propsinfos) {
+                propsinfos.forEach(pi => {
+                    if (!pi.label) {
+                        pi.label = pi.name
+                    }
+                    const usePattern = this.extraPattern1.find((el) => el.ForTypes.indexOf(pi.type) > -1)
+                    if (usePattern) {
+                        const snippet = usePattern.Pattern
+                            .replace(/\{label\}/g, pi.label)
+                            .replace(/\{name\}/g, pi.name)
+                            .replace(/\{type\}/g, pi.type)
+                        l.push(snippet)
+                    }
+
+                })
+            }
+            return l
+        },
+        get ExtraPattern2() {
+            const l = []
+            const propsinfos = this.extractedPropertiesInfo
+            if (propsinfos) {
+                propsinfos.forEach(pi => {
+                    if (!pi.label) {
+                        pi.label = pi.name
+                    }
+                    const usePattern = this.extraPattern2.find((el) => el.ForTypes.indexOf(pi.type) > -1)
+                    if (usePattern) {
+                        const snippet = usePattern.Pattern
+                            .replace(/\{label\}/g, pi.label)
+                            .replace(/\{name\}/g, pi.name)
+                            .replace(/\{type\}/g, pi.type)
+                        l.push(snippet)
+                    }
+
+                })
+            }
+            return l
+        },
+        get ExtraPattern3() {
+            const l = []
+            const propsinfos = this.extractedPropertiesInfo
+            if (propsinfos) {
+                propsinfos.forEach(pi => {
+                    if (!pi.label) {
+                        pi.label = pi.name
+                    }
+                    const usePattern = this.extraPattern3.find((el) => el.ForTypes.indexOf(pi.type) > -1)
+                    if (usePattern) {
+                        const snippet = usePattern.Pattern
+                            .replace(/\{label\}/g, pi.label)
+                            .replace(/\{name\}/g, pi.name)
+                            .replace(/\{type\}/g, pi.type)
+                        l.push(snippet)
+                    }
+        
+                })
+            }
+            return l
+        },
+        get ExtraPattern4() {
+            const l = []
+            const propsinfos = this.extractedPropertiesInfo
+            if (propsinfos) {
+                propsinfos.forEach(pi => {
+                    if (!pi.label) {
+                        pi.label = pi.name
+                    }
+                    const usePattern = this.extraPattern4.find((el) => el.ForTypes.indexOf(pi.type) > -1)
+                    if (usePattern) {
+                        const snippet = usePattern.Pattern
+                            .replace(/\{label\}/g, pi.label)
+                            .replace(/\{name\}/g, pi.name)
+                            .replace(/\{type\}/g, pi.type)
+                        l.push(snippet)
+                    }
+        
+                })
+            }
+            return l
         }
 
 
@@ -786,3 +910,6 @@ window.appObject = () => {
 }
 
 
+[...document.querySelectorAll("button")].forEach($el => {
+    $el.addEventListener("click", e => e.stopPropagation());
+});
