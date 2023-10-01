@@ -14,7 +14,7 @@
                 font-family: monospace;
             }
             label{
-                @apply mx-2 mb-2 block text-gray-900 font-bold ;
+                @apply mb-2 block font-semibold rounded text-sm px-2 py-1;
             }
              
           .box-1,.box-2 {
@@ -38,15 +38,24 @@
           }
 
           .form-control {
-            @apply px-2 py-1 text-slate-700 border border-gray-100 rounded-md bg-gray-200 w-full md:w-[30rem];
+            @apply px-2 py-1 text-slate-700 border border-gray-100 rounded-md bg-gray-200 w-full;
           }
 
           input[type='text'],
           textarea {
-            @apply form-control h-full;
+            @apply form-control h-full w-full;
           }
 
-         
+         .inverted {
+          @apply bg-gray-700 text-gray-50;
+         }
+
+         .pattern-add{
+          @apply text-gray-100 hover:text-gray-700 bg-gray-500 hover:bg-gray-200 px-1 pb-[2px] rounded;
+         }
+         .pattern-delete{
+          @apply text-yellow-300 hover:text-yellow-100 bg-red-300 hover:bg-red-700 px-1 pb-[2px] rounded;
+         }
           
         }
       </style>
@@ -56,83 +65,93 @@
 <body>
 
   <div x-data="appObject()">
-    <div class="flex flex-wrap justify-start gap-3 p-3">
+    <div class="flex flex-wrap justify-start items-start gap-3 p-3 h-[calc(100vh-5rem)] ">
       
-      <div class="h-[calc(100vh-5rem)] flex flex-col justify-start gap-y-3 w-[30rem]">
+      <div class="h-[calc(100vh-5rem)] flex flex-col justify-start gap-y-3 w-[22rem]">
         
-        <div class="flex flex-col justify-start gap-y-1 flex-1 py-3 w-full">
-          <label for="">Input - C# Class</label>
+        <div class="flex flex-col justify-start gap-y-1 py-3 w-full h-80">
+          <label class="inverted">Input - C# Class</label>
           <div class="flex-1"> <textarea x-model="input"></textarea></div>
           <div><button x-on:click="extract" class="px-3 py-1 my-2 border bg-gray-100 hover:bg-gray-300 rounded" >extract/refresh properties</button></div>
         </div>
         
       
-        <div class="flex-1 overflow-scroll p-3 bg-gray-200 rounded-md w-full">
-          <template x-for="(ep, index) in extracted" :key="index">
-            <div class="grid grid-cols-10 gap-3 overflow-scroll">
-              <div><input type="checkbox" x-model="ep.incl" x-bind:name="'incl_'+index" /></div>
-              <div class="col-span-2"><input type="text" style="width:100%"  x-model="ep.type"/></div>
-              <div class="col-span-7"><input type="text"  style="width:100%" x-model="ep.name"/></div>
-            </div>
-            
-          </template>
+        <div class="flex-1 overflow-scroll">
+          <label class="inverted">Included in Results:</label>
+          <div class="p-3 bg-gray-200 rounded-md">
+            <template x-for="(ep, index) in extracted" :key="index">
+              <div class="grid grid-cols-10 gap-3 overflow-scroll">
+                <div><input type="checkbox" x-model="ep.incl" x-bind:name="'incl_'+index" /></div>
+                <div class="col-span-2"><input type="text" style="width:100%"  x-model="ep.type"/></div>
+                <div class="col-span-7"><input type="text"  style="width:100%" x-model="ep.name"/></div>
+              </div>            
+            </template>
+          </div>
+
         </div>
         
 
       </div>
 
-      <div >
-        <label for="sdp">Display Patterns: <button x-on:click="addDisplayPattern">[+]</button> </label>
-        <template x-for="(pattern, index) in stringDP" :key="index">
+      <div class="flex flex-col justify-start gap-y-3 w-[22rem]">
+        <div class="w-full">
+          <label class="inverted" for="sdp">Display Patterns: <button x-on:click="addDisplayPattern" title="Add a pattern" class="pattern-add">[+]</button> </label>
+          <template x-for="(pattern, index) in stringDP" :key="index">
+            <div>
+              <label>Pattern:  <button x-on:click="removeDisplayPattern(index)" title="Deletion is ireversible!..." class="pattern-delete">[-]</button></label>
+              <p>
+                <textarea x-model="pattern.Pattern" x-bind:name="'pattern_' + index"></textarea>
+              </p>
+              <label>Apply to type(s): </label>
+              <p>
+                <input type="text" x-model="pattern.ForTypes" x-bind:name="'forTypes_' + index" />
+              </p>
+            </div>
+  
+          </template>
+  
           <div>
-            <label>Pattern:  <button x-on:click="removeDisplayPattern(index)">[-]</button></label>
-            <p>
-              <textarea x-model="pattern.Pattern" x-bind:name="'pattern_' + index"></textarea>
-            </p>
-            <label>Apply to type(s): </label>
-            <p>
-              <input type="text" x-model="pattern.ForTypes" x-bind:name="'forTypes_' + index" />
-            </p>
+         
+            <label>Result:</label>
+            <div class="h-40">
+              <textarea x-text="razorDisplay.join('')"></textarea>
+            </div>
+    
           </div>
+        </div>
 
-        </template>
 
         <div>
-       
-          <label>Result:</label>
-          <div class="h-full">
-            <textarea x-text="razorDisplay.join('')"></textarea>
-          </div>
+          <label class="inverted">Edit Patterns: <button x-on:click="addEditPattern" title="Add a pattern" class="pattern-add">[+]</button> </label>
+          <template x-for="(pattern, index) in stringEP" :key="index">
+            <div>
+              <label>Pattern:  <button x-on:click="removeEditPattern(index)" title="Deletion is ireversible!..." class="pattern-delete">[-]</button></label>
+              <div>
+                <textarea x-model="pattern.Pattern" x-bind:name="'pattern_' + index"></textarea>
+              </div>
+              <label>Apply to type(s): </label>
+              <div>
+                <input type="text" x-model="pattern.ForTypes" x-bind:name="'forTypes_' + index" />
+              </div>
+            </div>
   
-        </div>
-      </div>
-
-
-      <div>
-        <label for="sep">Edit Patterns: <button x-on:click="addEditPattern">[+]</button> </label>
-        <template x-for="(pattern, index) in stringEP" :key="index">
+          </template>
+  
           <div>
-            <label>Pattern:  <button x-on:click="removeEditPattern(index)">[-]</button></label>
-            <p>
-              <textarea x-model="pattern.Pattern" x-bind:name="'pattern_' + index"></textarea>
-            </p>
-            <label>Apply to type(s): </label>
-            <p>
-              <input type="text" x-model="pattern.ForTypes" x-bind:name="'forTypes_' + index" />
-            </p>
+         
+            <label>Result:</label>
+            <div class="h-40">
+              <textarea x-text="razorEdit.join('')"></textarea>
+            </div>
+    
           </div>
-
-        </template>
-
-        <div>
-       
-          <label>Result:</label>
-          <div class="h-full">
-            <textarea x-text="razorEdit.join('')"></textarea>
-          </div>
-  
         </div>
+
       </div>
+      
+
+
+      
 
 
     </div>
