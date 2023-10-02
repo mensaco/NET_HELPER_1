@@ -69,7 +69,7 @@
           @apply text-blue-100 hover:text-blue-700 bg-blue-500 hover:bg-blue-200 px-1 pb-[2px] rounded;
          }
          .pattern-copy{
-          @apply text-green-100 hover:text-green-700 bg-green-500 hover:bg-green-200 px-1 pb-[2px] rounded;
+          @apply text-green-100 hover:text-blue-900 bg-green-500 hover:bg-green-200 px-1 pb-[2px] rounded;
          }
          .pattern-add{
           @apply text-gray-100 hover:text-gray-700 bg-gray-500 hover:bg-gray-200 px-1 pb-[2px] rounded;
@@ -126,8 +126,8 @@
             <template x-for="(ep, index) in extracted" :key="index">
               <div class="grid grid-cols-10 gap-3 overflow-scroll">
                 <div><input type="checkbox" x-model="ep.incl" x-bind:name="'incl_'+index" /></div>
-                <div class="col-span-2"><input type="text" style="width:100%" x-model="ep.type" /></div>
-                <div class="col-span-7"><input type="text" style="width:100%" x-model="ep.name" /></div>
+                <div class="col-span-3"><input type="text" style="width:100%" x-model="ep.type" /></div>
+                <div class="col-span-6"><input type="text" style="width:100%" x-model="ep.name" /></div>
               </div>
             </template>
           </div>
@@ -165,7 +165,7 @@
                 x-on:click="copyText(razorDisplay.join(''))" title="Copy the result to the Clipboard"
                 @mouseout="isover=''" @mouseover="isover = 'inverted-green'" class="pattern-copy">[c]</button></div>
             <div class="h-40">
-              <textarea x-text="razorDisplay.join('')" :class="isover"></textarea>
+              <textarea x-text="razorDisplay.join('')" :class="isover" class="text-blue-900"></textarea>
             </div>
 
           </div>
@@ -197,7 +197,7 @@
                 x-on:click="copyText(razorEdit.join(''))" title="Copy the result to the Clipboard" @mouseout="isover=''"
                 @mouseover="isover = 'inverted-green'" class="pattern-copy">[c]</button></div>
             <div class="h-40">
-              <textarea x-text="razorEdit.join('')" :class="isover"></textarea>
+              <textarea x-text="razorEdit.join('')" :class="isover" class="text-blue-900"></textarea>
             </div>
 
           </div>
@@ -235,7 +235,7 @@
                 x-on:click="copyText(ExtraPattern1.join(''))" title="Copy the result to the Clipboard"
                 @mouseout="isover=''" @mouseover="isover = 'inverted-green'" class="pattern-copy">[c]</button></div>
             <div class="h-40">
-              <textarea x-text="ExtraPattern1.join('')" :class="isover"></textarea>
+              <textarea x-text="ExtraPattern1.join('')" :class="isover" class="text-blue-900"></textarea>
             </div>
 
           </div>
@@ -267,7 +267,7 @@
                 x-on:click="copyText(ExtraPattern2.join(''))" title="Copy the result to the Clipboard"
                 @mouseout="isover=''" @mouseover="isover = 'inverted-green'" class="pattern-copy">[c]</button></div>
             <div class="h-40">
-              <textarea x-text="ExtraPattern2.join('')" :class="isover"></textarea>
+              <textarea x-text="ExtraPattern2.join('')" :class="isover" class="text-blue-900"></textarea>
             </div>
 
           </div>
@@ -304,7 +304,7 @@
                 x-on:click="copyText(ExtraPattern3.join(''))" title="Copy the result to the Clipboard"
                 @mouseout="isover=''" @mouseover="isover = 'inverted-green'" class="pattern-copy">[c]</button></div>
             <div class="h-40">
-              <textarea x-text="ExtraPattern3.join('')" :class="isover"></textarea>
+              <textarea x-text="ExtraPattern3.join('')" :class="isover" class="text-blue-900"></textarea>
             </div>
 
           </div>
@@ -336,7 +336,7 @@
                 x-on:click="copyText(ExtraPattern4.join(''))" title="Copy the result to the Clipboard"
                 @mouseout="isover=''" @mouseover="isover = 'inverted-green'" class="pattern-copy">[c]</button></div>
             <div class="h-40">
-              <textarea x-text="ExtraPattern4.join('')" :class="isover"></textarea>
+              <textarea x-text="ExtraPattern4.join('')" :class="isover" class="text-blue-900"></textarea>
             </div>
 
           </div>
